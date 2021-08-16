@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from 'react';
 import './App.css';
-import { PUBLIC_URL } from './env';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { AuthContext, logout } from './contexts/AuthContext';
-import { Button } from 'antd';
+import { AuthContext } from './contexts/AuthContext';
+import { Alert, Skeleton } from 'antd';
+import Box from './components/common/Box';
+import AppLayout from './components/common/AppLayout';
+import ThemeContextProvider from './contexts/ThemeContext';
+import { BarChartOutlined } from '@ant-design/icons';
 
 function App() {
-  const { isLoggedIn, userId, token } = useContext(AuthContext);
-  const [instances, setInstances] = useState<string[] | undefined>(undefined);
+  const { userId, token } = useContext(AuthContext);
+  const [, setInstances] = useState<string[] | undefined>(undefined);
   useEffect(() => {
     if (userId) {
       fetch(
@@ -33,51 +35,62 @@ function App() {
     }
   }, [userId, token]);
   return (
-    <div
-      style={{
-        backgroundColor: '#003676',
-        color: 'white',
-        margin: 'auto',
-        width: '100%',
-        height: '100%',
-        fontSize: '2.7rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <BrowserRouter basename={PUBLIC_URL}>
-        <Switch>
-          <Route path="/" exact>
-            <div className="p-10 m-10 flex flex-col items-center">
-              {isLoggedIn && (
-                <>
-                  {instances?.length === 0
-                    ? 'You have no active instances at the moment'
-                    : 'Your instances on CrownLabs:'}
-                </>
-              )}
-              {instances?.map(instance => (
-                <h6 style={{ fontSize: '1.5rem' }}>{instance}</h6>
-              ))}
-              {isLoggedIn && (
-                <>
-                  <Button
-                    onClick={() => {
-                      logout();
-                    }}
-                  >
-                    LOGOUT
-                  </Button>
-                </>
-              )}
-            </div>
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </div>
+    <ThemeContextProvider>
+      <AppLayout
+        TooltipButtonLink="https://play.grafana.org/"
+        TooltipButtonData={{
+          tooltipPlacement: 'left',
+          tooltipTitle: 'Statistics',
+          icon: (
+            <BarChartOutlined
+              style={{ fontSize: '22px' }}
+              className="flex items-center justify-center "
+            />
+          ),
+          type: 'success',
+        }}
+        routes={[
+          { name: 'Dashboard', path: '/' },
+          { name: 'Active', path: '/active' },
+          { name: 'Drive', path: 'https://nextcloud.com/', externalLink: true },
+          { name: 'Account', path: '/account' },
+        ].map(r => {
+          return {
+            route: {
+              ...r,
+            },
+            content: (
+              <div className="m-8 ">
+                <Box
+                  header={{
+                    size: 'middle',
+                    center: (
+                      <div className="h-full flex justify-center items-center px-5">
+                        <p className="md:text-2xl text-xl text-center mb-0">
+                          <b>{r.name}</b>
+                        </p>
+                      </div>
+                    ),
+                  }}
+                >
+                  <div className="flex justify-center">
+                    <Alert
+                      className="mb-4 mt-8 mx-8 w-full"
+                      message="Warning"
+                      description="This is a temporary content"
+                      type="warning"
+                      showIcon
+                      closable
+                    />
+                  </div>
+                  <Skeleton className="px-8 pt-1" />
+                </Box>
+              </div>
+            ),
+          };
+        })}
+      />
+    </ThemeContextProvider>
   );
 }
 
