@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import './App.css';
 import { AuthContext } from './contexts/AuthContext';
-import { Alert, Skeleton } from 'antd';
-import Box from './components/common/Box';
 import AppLayout from './components/common/AppLayout';
 import ThemeContextProvider from './contexts/ThemeContext';
 import { BarChartOutlined } from '@ant-design/icons';
+import DashboardLogic from './components/workspaces/DashboardLogic/DashboardLogic';
 
 function App() {
   const { userId, token } = useContext(AuthContext);
@@ -34,6 +33,7 @@ function App() {
         });
     }
   }, [userId, token]);
+
   return (
     <ThemeContextProvider>
       <AppLayout
@@ -50,45 +50,49 @@ function App() {
           type: 'success',
         }}
         routes={[
-          { name: 'Dashboard', path: '/' },
-          { name: 'Active', path: '/active' },
-          { name: 'Drive', path: 'https://nextcloud.com/', externalLink: true },
-          { name: 'Account', path: '/account' },
-        ].map(r => {
-          return {
-            route: {
-              ...r,
-            },
-            content: (
-              <div className="m-8 ">
-                <Box
-                  header={{
-                    size: 'middle',
-                    center: (
-                      <div className="h-full flex justify-center items-center px-5">
-                        <p className="md:text-2xl text-xl text-center mb-0">
-                          <b>{r.name}</b>
-                        </p>
-                      </div>
-                    ),
-                  }}
-                >
-                  <div className="flex justify-center">
-                    <Alert
-                      className="mb-4 mt-8 mx-8 w-full"
-                      message="Warning"
-                      description="This is a temporary content"
-                      type="warning"
-                      showIcon
-                      closable
-                    />
-                  </div>
-                  <Skeleton className="px-8 pt-1" />
-                </Box>
-              </div>
-            ),
-          };
-        })}
+          {
+            route: { name: 'Dashboard', path: '/' },
+            content: <DashboardLogic />,
+          },
+          // { name: 'Active', path: '/active' },
+          // { name: 'Drive', path: 'https://nextcloud.com/', externalLink: true },
+          // { name: 'Account', path: '/account' },
+        ]}
+        //   .map(r => {
+        //   return {
+        //     route: {
+        //       ...r,
+        //     },
+        //     content: (
+        //       <div className="m-8 ">
+        //         <Box
+        //           header={{
+        //             size: 'middle',
+        //             center: (
+        //               <div className="h-full flex justify-center items-center px-5">
+        //                 <p className="md:text-2xl text-xl text-center mb-0">
+        //                   <b>{r.name}</b>
+        //                 </p>
+        //               </div>
+        //             ),
+        //           }}
+        //         >
+        //           <div className="flex justify-center">
+        //             <Alert
+        //               className="mb-4 mt-8 mx-8 w-full"
+        //               message="Warning"
+        //               description="This is a temporary content"
+        //               type="warning"
+        //               showIcon
+        //               closable
+        //             />
+        //           </div>
+        //           <Skeleton className="px-8 pt-1" />
+        //         </Box>
+        //       </div>
+        //     ),
+        //   };
+        // })}
       />
     </ThemeContextProvider>
   );
