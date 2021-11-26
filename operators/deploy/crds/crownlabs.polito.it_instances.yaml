@@ -63,6 +63,32 @@ spec:
             description: InstanceSpec is the specification of the desired state of
               the Instance.
             properties:
+              authorizedGroups:
+                description: Groups that will be able to access the instance through
+                  the ingress exposition endpoint.
+                items:
+                  type: string
+                type: array
+              customizationUrls:
+                description: InstanceCustomizationUrls specifies optional urls for
+                  advanced integration features.
+                properties:
+                  contentDestination:
+                    description: URL to which POST an archive with the contents found
+                      (at instance termination) in Template.ContainerStartupOptions.ContentPath.
+                    type: string
+                  contentOrigin:
+                    description: URL from which GET the archive to be extracted into
+                      Template.ContainerStartupOptions.ContentPath. Template.ContainerStartupOptions.SourceArchiveURL
+                      OVERRIDES this field, if set.
+                    type: string
+                  statusCheck:
+                    description: URL which is periodically checked (with a GET request)
+                      to determine automatic instance shutdown. Should return any
+                      2xx status code if the instance has to keep running, any 4xx
+                      otherwise.
+                    type: string
+                type: object
               prettyName:
                 description: Custom name the user can assign and change at any time
                   in order to more easily identify the instance.
@@ -133,6 +159,16 @@ spec:
                   environment (e.g. VM). This conveys which resource is being created,
                   as well as whether the associated VM is being scheduled, is running
                   or ready to accept incoming connections.
+                enum:
+                - ""
+                - Importing
+                - Starting
+                - Running
+                - VmiReady
+                - Stopping
+                - VmiOff
+                - Failed
+                - CreationLoopBackoff
                 type: string
               url:
                 description: The URL where it is possible to access the remote desktop
